@@ -1,11 +1,9 @@
-"use client";
-
-import { notFound } from "next/navigation";
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { use } from "react";
-import { services, getServiceBySlug } from "@/lib/services";
 import { FiHome, FiCheckCircle, FiBriefcase, FiTool, FiZap, FiHardDrive, FiCalendar } from "react-icons/fi";
+import dbConnect from "@/lib/db";
+import Service from "@/models/Service";
+import FadeIn from "@/components/FadeIn";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 const serviceIconMap = {
   "home-inspection": FiHome,
@@ -15,14 +13,14 @@ const serviceIconMap = {
   "new-construction-inspection": FiHardDrive,
 };
 
-export default function ServiceSlugPage({ params }) {
-  // In Next.js 16 App Router params is a Promise
-  const { slug } = use(params);
-  const service = getServiceBySlug(slug);
-
+export default async function ServiceSlugPage({ params }) {
+  await dbConnect();
+  const { slug } = await params;
+  
+  const service = await Service.findOne({ slug, active: true });
   if (!service) notFound();
 
-  const others = services.filter((s) => s.slug !== slug).slice(0, 3);
+  const others = await Service.find({ slug: { $ne: slug }, active: true }).limit(3);
 
   return (
     <div className="min-h-screen" style={{ background: "var(--color-bg)" }}>
@@ -35,28 +33,28 @@ export default function ServiceSlugPage({ params }) {
 
         <div className="max-container relative">
           {/* Breadcrumb */}
-          <motion.nav initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35 }} className="flex items-center gap-2 text-xs mb-6" style={{ color: "var(--color-text-muted)" }}>
-            <Link href="/home" className="hover:text-sky-500 transition-colors">Home</Link>
-            <span>›</span>
-            <Link href="/services" className="hover:text-sky-500 transition-colors">Services</Link>
-            <span>›</span>
-            <span style={{ color: service.color }}>{service.title}</span>
-          </motion.nav>
+          <FadeIn>
+            <nav className="flex items-center gap-2 text-xs mb-6" style={{ color: "var(--color-text-muted)" }}>
+              <Link href="/home" className="hover:text-sky-500 transition-colors">Home</Link>
+              <span>›</span>
+              <Link href="/services" className="hover:text-sky-500 transition-colors">Services</Link>
+              <span>›</span>
+              <span style={{ color: service.color }}>{service.title}</span>
+            </nav>
+          </FadeIn>
 
           <div className="grid md:grid-cols-[1fr_auto] gap-8 items-start">
             <div>
               {service.badge && (
-                <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.05, duration: 0.35 }}>
+                <FadeIn delay={0.05}>
                   <span className="inline-flex items-center text-xs font-bold px-3 py-1 rounded-full mb-4"
                     style={{ background: service.color, color: "#fff" }}>
                     ✦ {service.badge}
                   </span>
-                </motion.div>
+                </FadeIn>
               )}
-              <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.5 }}
-                className="flex items-center gap-4 mb-4">
-                <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4 text-3xl"
+              <FadeIn delay={0.1} className="flex items-center md:gap-4 gap-2 mb-4">
+                <div className="aspect-square px-3 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl glass"
                   style={{ background: "#fff", border: `1px solid ${service.border}`, boxShadow: "var(--shadow-sm)" }}>
                   {(() => {
                     const Icon = serviceIconMap[service.slug] || FiHome;
@@ -71,28 +69,30 @@ export default function ServiceSlugPage({ params }) {
                       style={{ background: "rgba(0,0,0,0.06)", color: "var(--color-text-muted)" }}>⏱ {service.duration}</span>
                   </div>
                 </div>
-              </motion.div>
-              <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18, duration: 0.45 }}
-                className="text-sm sm:text-base leading-relaxed max-w-2xl" style={{ color: "var(--color-text-secondary)" }}>
-                {service.description}
-              </motion.p>
+              </FadeIn>
+              <FadeIn delay={0.18}>
+                <p className="text-sm sm:text-base leading-relaxed max-w-2xl" style={{ color: "var(--color-text-secondary)" }}>
+                  {service.description}
+                </p>
+              </FadeIn>
             </div>
 
             {/* CTA card */}
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25, duration: 0.45 }}
-              className="rounded-2xl p-6 min-w-[220px]"
-              style={{ background: "#fff", border: `1px solid ${service.border}`, boxShadow: "var(--shadow-md)" }}>
-              <p className="text-sm font-bold mb-1" style={{ color: "var(--color-text-primary)" }}>Ready to book?</p>
-              <p className="text-xs mb-4" style={{ color: "var(--color-text-muted)" }}>Our AI assistant schedules it in 2 minutes.</p>
-              <Link href="/">
-                <motion.button whileHover={{ y: -1 }} whileTap={{ scale: 0.97 }} className="btn-primary w-full justify-center flex items-center gap-2 text-sm">
-                  <FiCalendar size={14} /> Book Now
-                </motion.button>
-              </Link>
-              <Link href="/contact">
-                <button className="btn-outline w-full justify-center text-sm mt-2">Ask a Question</button>
-              </Link>
-            </motion.div>
+            <FadeIn delay={0.25}>
+              <div className="rounded-2xl p-6 min-w-[220px]"
+                style={{ background: "#fff", border: `1px solid ${service.border}`, boxShadow: "var(--shadow-md)" }}>
+                <p className="text-sm font-bold mb-1" style={{ color: "var(--color-text-primary)" }}>Ready to book?</p>
+                <p className="text-xs mb-4" style={{ color: "var(--color-text-muted)" }}>Our AI assistant schedules it in 2 minutes.</p>
+                <Link href="/">
+                  <button className="btn-primary w-full justify-center flex items-center gap-2 text-sm hover:-translate-y-1 active:scale-95 transition-all shadow-xl shadow-blue-100">
+                    <FiCalendar size={14} /> Book Now
+                  </button>
+                </Link>
+                <Link href="/contact">
+                  <button className="btn-outline w-full justify-center text-sm mt-2">Ask a Question</button>
+                </Link>
+              </div>
+            </FadeIn>
           </div>
         </div>
       </section>
@@ -108,17 +108,11 @@ export default function ServiceSlugPage({ params }) {
               </h2>
               <div className="grid gap-3">
                 {service.includes.map((item, i) => (
-                  <motion.div key={item}
-                    initial={{ opacity: 0, x: -12 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.05, duration: 0.35 }}
-                    className="flex items-center gap-3 p-4 rounded-2xl card"
-                  >
+                  <FadeIn key={item} delay={i * 0.05} className="flex items-center gap-3 p-4 rounded-2xl card transition-transform hover:-translate-y-1">
                     <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-xs font-bold text-white"
                       style={{ background: service.color }}>✓</div>
                     <span className="text-sm font-medium" style={{ color: "var(--color-text-primary)" }}>{item}</span>
-                  </motion.div>
+                  </FadeIn>
                 ))}
               </div>
             </div>
@@ -177,7 +171,7 @@ export default function ServiceSlugPage({ params }) {
           <div className="grid sm:grid-cols-3 gap-5">
             {others.map((svc) => (
               <Link key={svc.slug} href={`/services/${svc.slug}`}>
-                <motion.div whileHover={{ y: -4, boxShadow: "var(--shadow-md)" }} className="card p-5 cursor-pointer h-full">
+                <div className="card p-5 cursor-pointer h-full hover:-translate-y-1 hover:shadow-md transition-all">
                   <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 text-xl"
                     style={{ background: svc.bg }}>
                     {(() => {
@@ -188,7 +182,7 @@ export default function ServiceSlugPage({ params }) {
                   <h3 className="font-bold text-sm mb-1" style={{ color: "var(--color-text-primary)" }}>{svc.title}</h3>
                   <p className="text-xs leading-relaxed" style={{ color: "var(--color-text-muted)" }}>{svc.shortDesc}</p>
                   <div className="mt-3 text-xs font-bold" style={{ color: svc.color }}>Learn more →</div>
-                </motion.div>
+                </div>
               </Link>
             ))}
           </div>

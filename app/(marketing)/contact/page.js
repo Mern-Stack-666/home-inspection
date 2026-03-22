@@ -46,13 +46,13 @@ export default function ContactPage() {
       {/* ── Breadcrumb + Hero ── */}
       <section className="relative pt-28 pb-10 px-5 overflow-hidden"
         style={{ background: "var(--color-bg)", borderBottom: "1px solid var(--color-border)" }}>
-        
+
         {/* Abstract Background Elements */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.05] blur-[100px] pointer-events-none"
           style={{ background: "var(--color-accent-2)" }} />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-[0.03] blur-[80px] pointer-events-none"
           style={{ background: "var(--color-accent)" }} />
-        
+
         <div className="absolute inset-0 opacity-[0.02] pointer-events-none"
           style={{ backgroundImage: "linear-gradient(#000 1px,transparent 1px),linear-gradient(90deg,#000 1px,transparent 1px)", backgroundSize: "40px 40px" }} />
 
@@ -72,8 +72,8 @@ export default function ContactPage() {
               </motion.div>
 
               <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.5 }}
-                className="flex items-center gap-5 mb-5">
-                <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl glass"
+                className="flex items-center md:gap-5 gap-2 mb-5">
+                <div className="aspect-square px-3 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl glass"
                   style={{ background: "#fff", border: "1px solid var(--color-border)" }}>
                   <div className="h-full bg-slate-50 flex shrink-0 items-center justify-center p-3">
                     <FiMapPin size={18} className="text-slate-400" />

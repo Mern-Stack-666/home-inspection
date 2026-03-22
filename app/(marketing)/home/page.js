@@ -1,27 +1,14 @@
-"use client";
-
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { services } from "@/lib/services";
+import dbConnect from "@/lib/db";
+import Service from "@/models/Service";
+import Testimonial from "@/models/Testimonial";
+import FadeIn from "@/components/FadeIn";
 import {
   FiHome, FiTool, FiZap, FiHardDrive,
   FiCheckCircle, FiBriefcase, FiShield, FiPhone,
   FiStar, FiArrowRight,
 } from "react-icons/fi";
-
-function FadeIn({ children, delay = 0, className = "" }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
-  return (
-    <motion.div ref={ref} initial={{ opacity: 0, y: 28 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }} className={className}>
-      {children}
-    </motion.div>
-  );
-}
 
 // Map slug to react-icon component
 const serviceIconMap = {
@@ -39,22 +26,11 @@ const stats = [
   { value: "24h", label: "Report Delivery" },
 ];
 
-const testimonials = [
-  {
-    name: "Sarah M.", role: "First-time homebuyer",
-    text: "Alex walked me through booking in 2 minutes. The inspection was incredibly thorough!", initials: "SM"
-  },
-  {
-    name: "David R.", role: "Property Investor",
-    text: "Used HomeInspect for 6 commercial properties. Consistently detailed reports, always on time.", initials: "DR"
-  },
-  {
-    name: "Emily K.", role: "Realtor",
-    text: "I refer all my clients here. Fast scheduling, certified inspectors, clean digital reports.", initials: "EK"
-  },
-];
+export default async function HomePage() {
+  await dbConnect();
+  const services = await Service.find({ active: true }).limit(5);
+  const testimonials = await Testimonial.find({ active: true }).limit(3);
 
-export default function HomePage() {
   return (
     <div className="min-h-screen" style={{ background: "var(--color-bg)" }}>
 
@@ -72,61 +48,57 @@ export default function HomePage() {
         <div className="max-container grid lg:grid-cols-2 gap-16 items-center">
           {/* Left — copy */}
           <div>
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
+            <FadeIn>
               <span className="badge mb-5 inline-flex">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
                 Trusted by 5,000+ Homeowners
               </span>
-            </motion.div>
+            </FadeIn>
 
-            <motion.h1 initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6"
-              style={{ color: "var(--color-text-primary)" }}>
-              Your Home Deserves{" "}
-              <span className="gradient-text">Expert Eyes</span>
-            </motion.h1>
+            <FadeIn delay={0.1}>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.1] mb-6"
+                style={{ color: "var(--color-text-primary)" }}>
+                Your Home Deserves{" "}
+                <span className="gradient-text">Expert Eyes</span>
+              </h1>
+            </FadeIn>
 
-            <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="text-base sm:text-lg max-w-lg mb-10 leading-relaxed"
-              style={{ color: "var(--color-text-muted)" }}>
-              Professional home inspections built around you. Chat with our AI assistant
-              to book in minutes — no forms, no hassle.
-            </motion.p>
+            <FadeIn delay={0.2}>
+              <p className="text-base sm:text-lg max-w-lg mb-10 leading-relaxed"
+                style={{ color: "var(--color-text-muted)" }}>
+                Professional home inspections built around you. Chat with our AI assistant
+                to book in minutes — no forms, no hassle.
+              </p>
+            </FadeIn>
 
-            <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.45 }}
-              className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Link href="/"><button className="btn-primary text-sm">Book an Inspection</button></Link>
-              <Link href="/services"><button className="btn-outline text-sm flex items-center gap-2">Explore Services <FiArrowRight size={14} /></button></Link>
-            </motion.div>
+            <FadeIn delay={0.3}>
+              <div className="flex flex-col sm:flex-row gap-4 mb-12">
+                <Link href="/"><button className="btn-primary text-sm">Book an Inspection</button></Link>
+                <Link href="/services"><button className="btn-outline text-sm flex items-center gap-2">Explore Services <FiArrowRight size={14} /></button></Link>
+              </div>
+            </FadeIn>
 
             {/* Stats row */}
-            <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.45, duration: 0.5 }}
-              className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-              {stats.map((s) => (
-                <div key={s.label}>
-                  <div className="text-2xl sm:text-3xl font-bold gradient-text">{s.value}</div>
-                  <div className="text-xs mt-1 font-medium" style={{ color: "var(--color-text-muted)" }}>{s.label}</div>
-                </div>
-              ))}
-            </motion.div>
+            <FadeIn delay={0.45}>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+                {stats.map((s) => (
+                  <div key={s.label}>
+                    <div className="text-2xl sm:text-3xl font-bold gradient-text">{s.value}</div>
+                    <div className="text-xs mt-1 font-medium" style={{ color: "var(--color-text-muted)" }}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
+            </FadeIn>
           </div>
 
           {/* Right — hero image */}
-          <motion.div initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.25, duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            className="relative hidden lg:block">
+          <FadeIn delay={0.25} className="relative hidden lg:block">
             <div className="relative rounded-3xl overflow-hidden aspect-4/3"
               style={{ boxShadow: "0 32px 80px rgba(14,165,233,0.18), 0 8px 24px rgba(0,0,0,0.1)" }}>
               <Image src="/hero-inspection.png" alt="Home inspector examining property" fill className="object-cover" priority />
             </div>
             {/* Floating badge */}
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.4 }}
-              className="absolute -bottom-5 -left-5 card px-5 py-3 flex items-center gap-3"
+            <div className="absolute -bottom-5 -left-5 card px-5 py-3 flex items-center gap-3 animate-bounce-slow"
               style={{ boxShadow: "var(--shadow-lg)" }}>
               <div className="w-10 h-10 rounded-xl flex items-center justify-center"
                 style={{ background: "rgba(34,197,94,0.1)" }}>
@@ -136,13 +108,13 @@ export default function HomePage() {
                 <p className="text-xs font-bold" style={{ color: "var(--color-text-primary)" }}>Report Ready</p>
                 <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>Within 24 hours</p>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </FadeIn>
         </div>
       </section>
 
       {/* ══════════════════════ SERVICES ══════════════════════ */}
-      <section className="py-14" style={{ background: "var(--color-surface)" }}>
+      <section className="py-14 px-5" style={{ background: "var(--color-surface)" }}>
         <div className="max-container">
           <FadeIn className="text-center mb-14">
             <span className="badge mb-3 inline-flex">Our Services</span>
@@ -160,8 +132,7 @@ export default function HomePage() {
               return (
                 <FadeIn key={svc.slug} delay={i * 0.07}>
                   <Link href={`/services/${svc.slug}`}>
-                    <motion.div
-                      className="card p-7 h-full cursor-pointer relative overflow-hidden group/card">
+                    <div className="card p-7 h-full cursor-pointer relative overflow-hidden group/card">
                       <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--color-accent-2)]/20 rounded-bl-full transform translate-x-8 -translate-y-8 transition-transform group-hover/card:translate-x-4 group-hover/card:-translate-y-4" />
 
                       <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 glass relative z-10"
@@ -182,7 +153,7 @@ export default function HomePage() {
                           Details <FiArrowRight size={12} />
                         </span>
                       </div>
-                    </motion.div>
+                    </div>
                   </Link>
                 </FadeIn>
               );
@@ -356,10 +327,9 @@ export default function HomePage() {
                   Experience the future of property inspections. Chat with Alex to schedule your visit in under two minutes — no forms, no friction.
                 </p>
                 <Link href="/">
-                  <motion.button whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                    className="btn-primary px-10 py-4 text-base shadow-2xl">
+                  <button className="btn-primary px-10 py-4 text-base shadow-2xl hover:-translate-y-1 active:scale-95 transition-all">
                     Chat with Alex Now
-                  </motion.button>
+                  </button>
                 </Link>
               </div>
             </div>

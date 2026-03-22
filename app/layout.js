@@ -1,6 +1,6 @@
 import { Red_Hat_Display } from "next/font/google";
 import "./globals.css";
-import { ChatProvider } from "@/context/ChatContext";
+import { Providers } from "./providers";
 
 const redHatDisplay = Red_Hat_Display({
   subsets: ["latin"],
@@ -10,7 +10,7 @@ const redHatDisplay = Red_Hat_Display({
 });
 
 export const metadata = {
-  title: "Home Inspection — AI-Powered Scheduling",
+  title: "Home Inspect — AI-Powered Scheduling",
   description:
     "Professional home inspection services. Chat with our AI assistant to explore services or book your inspection in minutes.",
 };
@@ -22,9 +22,9 @@ export default function RootLayout({ children }) {
         className="min-h-full flex flex-col antialiased"
         style={{ fontFamily: "var(--font-red-hat), sans-serif" }}
       >
-        <ChatProvider>
+        <Providers>
           {children}
-        </ChatProvider>
+        </Providers>
       </body>
     </html>
   );

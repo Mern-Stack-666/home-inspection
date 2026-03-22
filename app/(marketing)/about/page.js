@@ -45,15 +45,15 @@ export default function AboutPage() {
     <div className="min-h-screen" style={{ background: "var(--color-bg)" }}>
 
       {/* ── Breadcrumb + Hero ── */}
-      <section className="relative pt-28 pb-10 px-5 overflow-hidden"
+      <section className="relative pt-24 sm:pt-32 pb-14 px-5 overflow-hidden"
         style={{ background: "var(--color-bg)", borderBottom: "1px solid var(--color-border)" }}>
-        
+
         {/* Abstract Background Elements */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.05] blur-[100px] pointer-events-none"
           style={{ background: "var(--color-accent-2)" }} />
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-[0.03] blur-[80px] pointer-events-none"
           style={{ background: "var(--color-accent)" }} />
-        
+
         <div className="absolute inset-0 opacity-[0.02] pointer-events-none"
           style={{ backgroundImage: "linear-gradient(#000 1px,transparent 1px),linear-gradient(90deg,#000 1px,transparent 1px)", backgroundSize: "40px 40px" }} />
 
@@ -73,26 +73,26 @@ export default function AboutPage() {
               </motion.div>
 
               <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.5 }}
-                className="flex items-center gap-5 mb-5">
-                <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl glass"
+                className="flex items-center md:gap-5 gap-2 mb-5">
+                <div className="aspect-square px-3 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl glass"
                   style={{ background: "#fff", border: "1px solid var(--color-border)" }}>
                   <FiBriefcase size={28} className="text-blue-900" />
                 </div>
                 <div>
-                  <h1 className="text-3xl sm:text-4xl font-bold leading-tight" style={{ color: "var(--color-text-primary)" }}>
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight" style={{ color: "var(--color-text-primary)" }}>
                     Inspecting with <span className="gradient-text">Heart & Precision.</span>
                   </h1>
                 </div>
               </motion.div>
               <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18, duration: 0.45 }}
-                className="text-sm sm:text-base leading-relaxed max-w-2xl text-slate-600">
+                className="text-sm sm:text-base leading-relaxed max-w-2xl text-slate-600 mb-8 md:mb-0">
                 Since 2012, HomeInspect has been the region's most trusted name in property evaluation. We combine decades of building experience with modern AI tools to empower every client.
               </motion.p>
             </div>
 
             {/* CTA card - Premium Glass */}
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.25, duration: 0.5 }}
-              className="rounded-3xl p-8 min-w-[280px] relative z-10 glass"
+              className="rounded-3xl p-6 sm:p-8 w-full md:min-w-[300px] relative z-10 glass"
               style={{ border: "1px solid var(--glass-border)" }}>
               <div className="absolute -top-3 -right-3 w-12 h-12 rounded-full flex items-center justify-center bg-amber-500 text-white shadow-lg animate-bounce duration-3000">
                 <FiClock size={20} />
@@ -110,10 +110,10 @@ export default function AboutPage() {
       </section>
 
       {/* ── Stats Banner ── */}
-      <section className="px-5 pb-12">
+      <section className="px-5 pt-12 pb-14">
         <div className="max-container">
           <FadeIn>
-            <div className="rounded-3xl px-8 py-10 grid grid-cols-2 sm:grid-cols-4 gap-8 text-center"
+            <div className="rounded-3xl px-6 sm:px-8 py-10 grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-center"
               style={{ background: "var(--color-surface)", border: "1px solid var(--color-border)", boxShadow: "var(--shadow-sm)" }}>
               {[
                 { value: "5,000+", label: "Inspections Completed" },
@@ -204,14 +204,14 @@ export default function AboutPage() {
         <div className="max-container">
           <FadeIn className="text-center mb-12">
             <span className="badge mb-3 inline-flex">Our Team</span>
-            <h2 className="text-3xl font-bold mt-2 mb-8" style={{ color: "var(--color-text-primary)" }}>
+            <h2 className="text-2xl sm:text-3xl font-bold mt-2 mb-8" style={{ color: "var(--color-text-primary)" }}>
               Meet the <span className="gradient-text">Experts</span>
             </h2>
-            <div className="relative w-full aspect-21/9 rounded-3xl overflow-hidden shadow-xl border border-gray-100 dark:border-gray-800">
+            <div className="relative w-full aspect-video md:aspect-21/9 rounded-3xl overflow-hidden shadow-xl border border-gray-100 dark:border-gray-800 mb-10">
               <Image src="/about-team.png" alt="The HomeInspect Team" fill className="object-cover" />
             </div>
           </FadeIn>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {team.map((member, i) => (
               <FadeIn key={member.name} delay={i * 0.08}>
                 <motion.div whileHover={{ y: -4 }} className="card p-6 text-center h-full">
@@ -246,8 +246,8 @@ export default function AboutPage() {
                 24/7 to help you get started instantly.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/"><button className="bg-white text-blue-900 font-bold text-sm px-8 py-3 rounded-full cursor-pointer hover:shadow-lg transition-shadow flex items-center justify-center gap-2"><FiMessageCircle size={16} /> Book via AI Chat</button></Link>
-                <Link href="/contact"><button className="border-2 border-white/50 text-white font-semibold text-sm px-8 py-3 rounded-full cursor-pointer hover:bg-white/10 transition-colors">Contact Us →</button></Link>
+                <Link href="/"><button className="bg-white text-blue-900 font-bold text-sm px-8 py-3 w-full rounded-full cursor-pointer hover:shadow-lg transition-shadow flex items-center justify-center gap-2"><FiMessageCircle size={16} /> Book via AI Chat</button></Link>
+                <Link href="/contact"><button className="border-2 border-white/50 text-white font-semibold w-full text-sm px-8 py-3 rounded-full cursor-pointer hover:bg-white/10 transition-colors">Contact Us →</button></Link>
               </div>
             </div>
           </FadeIn>

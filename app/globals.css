@@ -269,8 +269,7 @@ body::before {
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.form-input:focus {
-  border-color: var(--color-accent);
+.form-shadow:focus {
   box-shadow: 0 0 0 3px var(--color-accent-glow);
 }
 

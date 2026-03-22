@@ -1,10 +1,9 @@
-"use client";
-
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { services } from "@/lib/services";
+import dbConnect from "@/lib/db";
+import Service from "@/models/Service";
+import FadeIn from "@/components/FadeIn";
 import { FiHome, FiCheckCircle, FiShield, FiMessageSquare, FiBriefcase, FiTool, FiZap, FiHardDrive, FiCalendar } from "react-icons/fi";
 
 const serviceIconMap = {
@@ -15,18 +14,12 @@ const serviceIconMap = {
   "new-construction-inspection": FiHardDrive,
 };
 
-function FadeIn({ children, delay = 0, className = "" }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
-  return (
-    <motion.div ref={ref} initial={{ opacity: 0, y: 28 }} animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }} className={className}>
-      {children}
-    </motion.div>
-  );
-}
+// Removed inline FadeIn since we import the global one
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  await dbConnect();
+  const services = await Service.find({ active: true }).sort({ createdAt: -1 });
+
   return (
     <div className="min-h-screen" style={{ background: "var(--color-bg)" }}>
 
@@ -45,57 +38,61 @@ export default function ServicesPage() {
 
         <div className="max-container relative">
           {/* Breadcrumb */}
-          <motion.nav initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35 }} className="flex items-center gap-2 text-xs mb-6" style={{ color: "var(--color-text-muted)" }}>
-            <Link href="/home" className="hover:text-blue-600 transition-colors">Home</Link>
-            <span>›</span>
-            <span style={{ color: "var(--color-text-primary)" }}>Our Services</span>
-          </motion.nav>
+          <FadeIn>
+            <nav className="flex items-center gap-2 text-xs mb-6" style={{ color: "var(--color-text-muted)" }}>
+              <Link href="/home" className="hover:text-blue-600 transition-colors">Home</Link>
+              <span>›</span>
+              <span style={{ color: "var(--color-text-primary)" }}>Our Services</span>
+            </nav>
+          </FadeIn>
 
           <div className="grid md:grid-cols-[1fr_auto] gap-12 items-center">
             <div>
-              <motion.div initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.05, duration: 0.35 }}>
+              <FadeIn delay={0.05}>
                 <span className="badge mb-4 inline-flex">✦ Certified Services</span>
-              </motion.div>
+              </FadeIn>
 
-              <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.5 }}
-                className="flex items-center gap-5 mb-5">
-                <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl glass"
-                  style={{ background: "#fff", border: "1px solid var(--color-border)" }}>
-                  <FiBriefcase size={28} className="text-blue-900" />
+              <FadeIn delay={0.1}>
+                <div className="flex items-center md:gap-5 gap-2 mb-5">
+                  <div className="aspect-square px-3 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl glass"
+                    style={{ background: "#fff", border: "1px solid var(--color-border)" }}>
+                    <FiBriefcase size={28} className="text-blue-900" />
+                  </div>
+                  <div>
+                    <h1 className="text-3xl sm:text-4xl font-bold leading-tight" style={{ color: "var(--color-text-primary)" }}>
+                      Expert Inspections,<br /><span className="gradient-text">Complete Confidence.</span>
+                    </h1>
+                  </div>
                 </div>
-                <div>
-                  <h1 className="text-3xl sm:text-4xl font-bold leading-tight" style={{ color: "var(--color-text-primary)" }}>
-                    Expert Inspections,<br /><span className="gradient-text">Complete Confidence.</span>
-                  </h1>
-                </div>
-              </motion.div>
-              <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18, duration: 0.45 }}
-                className="text-sm sm:text-base leading-relaxed max-w-2xl text-slate-600">
-                Five specialized inspection types delivered by certified professionals using state-of-the-art diagnostic tools. Same-day scheduling and 24-hour report delivery.
-              </motion.p>
+              </FadeIn>
+              <FadeIn delay={0.18}>
+                <p className="text-sm sm:text-base leading-relaxed max-w-2xl text-slate-600">
+                  Five specialized inspection types delivered by certified professionals using state-of-the-art diagnostic tools. Same-day scheduling and 24-hour report delivery.
+                </p>
+              </FadeIn>
             </div>
 
             {/* CTA card - Premium Glass */}
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.25, duration: 0.5 }}
-              className="rounded-3xl p-8 min-w-[280px] relative z-10 glass"
-              style={{ border: "1px solid var(--glass-border)" }}>
-              <div className="absolute -top-3 -right-3 w-12 h-12 rounded-full flex items-center justify-center bg-amber-500 text-white shadow-lg animate-bounce duration-3000">
-                <FiCalendar size={20} />
+            <FadeIn delay={0.25}>
+              <div className="rounded-3xl p-8 min-w-[280px] relative z-10 glass"
+                style={{ border: "1px solid var(--glass-border)" }}>
+                <div className="absolute -top-3 -right-3 w-12 h-12 rounded-full flex items-center justify-center bg-amber-500 text-white shadow-lg animate-bounce duration-3000">
+                  <FiCalendar size={20} />
+                </div>
+                <p className="text-sm font-bold mb-1" style={{ color: "var(--color-text-primary)" }}>Ready to book?</p>
+                <p className="text-xs mb-6 text-slate-500">Alex can have you scheduled in under 2 minutes.</p>
+                <Link href="/">
+                  <button className="btn-primary w-full justify-center flex items-center gap-2 py-3.5 shadow-xl hover:-translate-y-1 active:scale-95 transition-all">
+                    Inspect My Property
+                  </button>
+                </Link>
+                <Link href="/contact">
+                  <button className="w-full text-center text-xs font-bold mt-4 text-slate-400 hover:text-blue-900 transition-colors uppercase tracking-widest">
+                    Have Questions?
+                  </button>
+                </Link>
               </div>
-              <p className="text-sm font-bold mb-1" style={{ color: "var(--color-text-primary)" }}>Ready to book?</p>
-              <p className="text-xs mb-6 text-slate-500">Alex can have you scheduled in under 2 minutes.</p>
-              <Link href="/">
-                <motion.button whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }} className="btn-primary w-full justify-center flex items-center gap-2 py-3.5 shadow-xl">
-                  Inspect My Property
-                </motion.button>
-              </Link>
-              <Link href="/contact">
-                <button className="w-full text-center text-xs font-bold mt-4 text-slate-400 hover:text-blue-900 transition-colors uppercase tracking-widest">
-                  Have Questions?
-                </button>
-              </Link>
-            </motion.div>
+            </FadeIn>
           </div>
         </div>
       </section>
@@ -150,17 +147,15 @@ export default function ServicesPage() {
 
                     <div className="flex gap-4 flex-wrap mt-auto">
                       <Link href={`/services/${svc.slug}`}>
-                        <motion.button whileHover={{ y: -1, background: `${svc.color}28` }} whileTap={{ scale: 0.98 }}
-                          className="text-xs font-bold px-6 py-2.5 rounded-xl cursor-pointer transition-all border border-transparent"
+                        <button className="text-xs font-bold px-6 py-2.5 rounded-xl cursor-pointer transition-all border border-transparent hover:brightness-95 active:scale-95"
                           style={{ background: `${svc.color}18`, color: svc.color }}>
                           Learn More
-                        </motion.button>
+                        </button>
                       </Link>
                       <Link href="/">
-                        <motion.button whileHover={{ y: -2, boxShadow: "0 12px 24px -10px rgba(30,58,138,0.3)" }} whileTap={{ scale: 0.98 }}
-                          className="btn-primary text-xs px-8 py-2.5 shadow-lg">
+                        <button className="btn-primary text-xs px-8 py-2.5 shadow-lg hover:-translate-y-1 active:scale-95 transition-all">
                           Book Inspection
-                        </motion.button>
+                        </button>
                       </Link>
                     </div>
                   </div>
