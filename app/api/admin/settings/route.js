@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import SiteSettings from "@/models/SiteSettings";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { getSession } from "@/lib/session";
 
 export async function GET() {
   await dbConnect();
@@ -14,7 +13,7 @@ export async function GET() {
 }
 
 export async function PATCH(req) {
-  const session = await getServerSession(authOptions);
+  const session = await getSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

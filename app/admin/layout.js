@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
+import { usePathname, useRouter } from "next/navigation";
 import {
   FiHome, FiGrid, FiCalendar, FiMessageSquare,
   FiSettings, FiLogOut, FiMenu, FiX
@@ -11,8 +10,43 @@ import {
 
 export default function AdminLayout({ children }) {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.user) {
+          setSession(data);
+          setLoading(false);
+        } else {
+          router.push("/auth/login");
+        }
+      })
+      .catch(() => {
+        router.push("/auth/login");
+      });
+  }, [router]);
+
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/auth/login");
+    router.refresh(); /* force server components to re-check cookies */
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--color-bg)" }}>
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-blue-900 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-blue-900 font-bold text-sm tracking-widest uppercase">Authorizing...</p>
+        </div>
+      </div>
+    );
+  }
 
   const navItems = [
     { label: "Dashboard", href: "/admin", icon: FiGrid },
@@ -60,7 +94,7 @@ export default function AdminLayout({ children }) {
             </nav>
 
             <button
-              onClick={() => signOut({ callbackUrl: "/auth/login" })}
+              onClick={handleLogout}
               className="flex items-center gap-4 px-5 py-4 mt-auto rounded-2xl font-bold text-rose-500 hover:bg-rose-50 transition-all active:scale-95"
             >
               <FiLogOut size={22} />

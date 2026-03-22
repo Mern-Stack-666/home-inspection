@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import FadeIn from "@/components/FadeIn";
 import { FiMail, FiLock, FiArrowRight, FiAlertCircle, FiLoader } from "react-icons/fi";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/admin";
@@ -24,21 +23,20 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-        callbackUrl,
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
 
-      if (result?.error) {
-        setError("Invalid email or password. Please try again.");
-        setLoading(false);
-      } else {
-        router.push(callbackUrl);
+      if (!res.ok) {
+        throw new Error("Invalid credentials");
       }
+
+      router.push(callbackUrl);
+      router.refresh(); /* Ensure the new cookie is picked up by Server Components */
     } catch (err) {
-      setError("An unexpected error occurred. Please try again later.");
+      setError("Invalid email or password. Please try again.");
       setLoading(false);
     }
   };
@@ -138,5 +136,13 @@ export default function LoginPage() {
         </p>
       </FadeIn>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-slate-50"><FiLoader className="animate-spin text-blue-900" size={30} /></div>}>
+      <LoginForm />
+    </Suspense>
   );
 }
