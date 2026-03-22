@@ -4,8 +4,6 @@ import SiteSettings from "@/models/SiteSettings";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
-export const dynamic = "force-dynamic";
-
 export async function GET() {
   await dbConnect();
   let settings = await SiteSettings.findOne();

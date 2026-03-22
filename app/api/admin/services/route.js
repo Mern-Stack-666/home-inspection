@@ -4,8 +4,6 @@ import Service from "@/models/Service";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 
-export const dynamic = "force-dynamic";
-
 export async function GET() {
   await dbConnect();
   const services = await Service.find().sort({ createdAt: -1 });
