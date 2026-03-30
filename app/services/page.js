@@ -1,7 +1,10 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import FadeIn from "@/components/FadeIn";
-import { FiHome, FiCheckCircle, FiShield, FiMessageSquare, FiBriefcase, FiTool, FiZap, FiHardDrive, FiCalendar } from "react-icons/fi";
+import { FiHome, FiCheckCircle, FiShield, FiMessageSquare, FiBriefcase, FiTool, FiZap, FiHardDrive, FiCalendar, FiLoader } from "react-icons/fi";
 import SiteFooter from "@/components/SiteFooter";
 import SiteNavbar from "@/components/SiteNavbar";
 const serviceIconMap = {
@@ -14,12 +17,43 @@ const serviceIconMap = {
 
 // Removed inline FadeIn since we import the global one
 
-export const dynamic = "force-dynamic";
+export default function ServicesPage() {
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-export default async function ServicesPage() {
-  const envUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-  const base = envUrl.includes("localhost") ? envUrl.replace("https://", "http://") : envUrl;
-  const services = await fetch(`${base}/api/services`, { cache: "no-store" }).then((r) => r.json());
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const res = await fetch(`/api/services`, { cache: "no-store" });
+        if (!res.ok) throw new Error("Failed to fetch services");
+        const data = await res.json();
+        setServices(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchServices();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-(--color-bg)">
+        <FiLoader className="animate-spin text-(--color-accent) mb-4" size={40} />
+        <p className="text-(--color-text-muted) font-medium">Loading services...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-(--color-bg) text-rose-500 font-bold">
+        Error: {error}
+      </div>
+    );
+  }
 
   return (
     <>

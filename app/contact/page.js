@@ -115,7 +115,7 @@ export default function ContactPage() {
         </section>
 
         {/* ── Contact Info Cards ── */}
-        <section className="px-5 pb-12">
+        <section className="px-5 py-12">
           <div className="max-container grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {contactInfo.map((c, i) => (
               <FadeIn key={c.label} delay={i * 0.07}>

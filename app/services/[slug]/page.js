@@ -1,4 +1,7 @@
-import { FiHome, FiCheckCircle, FiBriefcase, FiTool, FiZap, FiHardDrive, FiCalendar } from "react-icons/fi";
+"use client";
+
+import { useState, useEffect, use } from "react";
+import { FiHome, FiCheckCircle, FiBriefcase, FiTool, FiZap, FiHardDrive, FiCalendar, FiLoader } from "react-icons/fi";
 import FadeIn from "@/components/FadeIn";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -13,25 +16,65 @@ const serviceIconMap = {
   "new-construction-inspection": FiHardDrive,
 };
 
-export const dynamic = "force-dynamic";
+export default function ServiceSlugPage({ params }) {
+  const { slug } = use(params);
+  const [service, setService] = useState(null);
+  const [others, setOthers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isNotFound, setIsNotFound] = useState(false);
 
-export default async function ServiceSlugPage({ params }) {
-  const { slug } = await params;
-  const envUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-  const base = envUrl.includes("localhost") ? envUrl.replace("https://", "http://") : envUrl;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [serviceRes, allRes] = await Promise.all([
+          fetch(`/api/services?slug=${slug}`, { cache: "no-store" }),
+          fetch(`/api/services`, { cache: "no-store" }),
+        ]);
 
-  const [serviceRes, allRes] = await Promise.all([
-    fetch(`${base}/api/services?slug=${slug}`, { cache: "no-store" }),
-    fetch(`${base}/api/services`, { cache: "no-store" }),
-  ]);
+        if (serviceRes.status === 404) {
+          setIsNotFound(true);
+          return;
+        }
 
-  if (!serviceRes.ok) notFound();
+        if (!serviceRes.ok || !allRes.ok) throw new Error("Failed to fetch data");
 
-  const service = await serviceRes.json();
-  const allServices = await allRes.json();
-  const others = Array.isArray(allServices)
-    ? allServices.filter((s) => s.slug !== slug).slice(0, 3)
-    : [];
+        const [serviceData, allData] = await Promise.all([
+          serviceRes.json(),
+          allRes.json(),
+        ]);
+
+        setService(serviceData);
+        setOthers(Array.isArray(allData) ? allData.filter((s) => s.slug !== slug).slice(0, 3) : []);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [slug]);
+
+  if (isNotFound) return notFound();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-(--color-bg)">
+        <FiLoader className="animate-spin text-(--color-accent) mb-4" size={40} />
+        <p className="text-(--color-text-muted) font-medium">Loading service details...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-(--color-bg) text-rose-500 font-bold">
+        Error: {error}
+      </div>
+    );
+  }
+
+  if (!service) return null;
 
   return (
     <>

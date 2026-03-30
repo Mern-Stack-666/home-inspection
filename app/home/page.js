@@ -1,10 +1,13 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import FadeIn from "@/components/FadeIn";
 import {
   FiHome, FiTool, FiZap, FiHardDrive,
   FiCheckCircle, FiBriefcase, FiShield, FiPhone,
-  FiStar, FiArrowRight,
+  FiStar, FiArrowRight, FiLoader,
 } from "react-icons/fi";
 import SiteFooter from "@/components/SiteFooter";
 import SiteNavbar from "@/components/SiteNavbar";
@@ -25,15 +28,57 @@ const stats = [
   { value: "24h", label: "Report Delivery" },
 ];
 
-export const dynamic = "force-dynamic";
+export default function HomePage() {
+  const [services, setServices] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-export default async function HomePage() {
-  const envUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-  const base = envUrl.includes("localhost") ? envUrl.replace("https://", "http://") : envUrl;
-  const [services, testimonials] = await Promise.all([
-    fetch(`${base}/api/services`, { cache: "no-store" }).then((r) => r.json()),
-    fetch(`${base}/api/testimonials`, { cache: "no-store" }).then((r) => r.json()),
-  ]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [servicesRes, testimonialsRes] = await Promise.all([
+          fetch(`/api/services`),
+          fetch(`/api/testimonials`),
+        ]);
+
+        if (!servicesRes.ok || !testimonialsRes.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const [servicesData, testimonialsData] = await Promise.all([
+          servicesRes.json(),
+          testimonialsRes.json(),
+        ]);
+
+        setServices(servicesData);
+        setTestimonials(testimonialsData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-(--color-bg)">
+        <FiLoader className="animate-spin text-(--color-accent) mb-4" size={40} />
+        <p className="text-(--color-text-muted) font-medium">Loading premium experience...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-(--color-bg) text-rose-500 font-bold">
+        Error: {error}
+      </div>
+    );
+  }
 
   return (
     <>
