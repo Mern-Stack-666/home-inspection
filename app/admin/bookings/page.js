@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from "react";
 import FadeIn from "@/components/FadeIn";
-import { FiClock, FiCheckCircle, FiXCircle, FiInfo, FiCalendar, FiUser, FiLoader } from "react-icons/fi";
+import { FiClock, FiCheckCircle, FiXCircle, FiInfo, FiCalendar, FiUser, FiLoader, FiX } from "react-icons/fi";
 
 export default function AdminBookings() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [updatingId, setUpdatingId] = useState(null);
+  const [selectedBooking, setSelectedBooking] = useState(null);
 
   const fetchBookings = async () => {
     try {
@@ -109,8 +110,8 @@ export default function AdminBookings() {
                       </td>
                       <td className="px-10 py-8">
                         <div className="text-slate-800 font-bold">{new Date(booking.scheduledDate).toLocaleDateString()}</div>
-                        <div className="text-[10px] text-slate-400 uppercase tracking-widest mt-0.5">
-                          {new Date(booking.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        <div className="text-[10px] text-slate-400 uppercase tracking-widest mt-0.5" title="Scheduled Time">
+                          {new Date(booking.scheduledDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </div>
                       </td>
                       <td className="px-10 py-8">
@@ -124,6 +125,13 @@ export default function AdminBookings() {
                             <FiLoader className="animate-spin text-slate-400 mr-4" size={20} />
                           ) : (
                             <>
+                              <button 
+                                onClick={() => setSelectedBooking(booking)}
+                                title="View Details"
+                                className="p-3 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                              >
+                                <FiInfo size={20} />
+                              </button>
                               <button 
                                 onClick={() => updateStatus(booking._id, "confirmed")}
                                 title="Confirm Booking"
@@ -168,6 +176,116 @@ export default function AdminBookings() {
           </div>
         </div>
       </FadeIn>
+
+      {/* Booking Details Modal */}
+      {selectedBooking && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in duration-200 border border-slate-100">
+            <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-white">
+              <h3 className="text-xl font-bold text-slate-900">Booking Details</h3>
+              <button 
+                onClick={() => setSelectedBooking(null)}
+                className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-full transition-colors"
+                title="Close Details"
+              >
+                <FiX size={24} />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-8 overflow-y-auto">
+              {/* Customer Info */}
+              <div>
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <FiUser className="text-slate-300" /> Customer Information
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div className="text-sm border-b border-slate-200/60 pb-3 mb-3">
+                       <span className="text-slate-500 mr-2">Name:</span> <span className="font-bold text-slate-900">{selectedBooking.customerName}</span>
+                    </div>
+                    <div className="text-sm border-b border-slate-200/60 pb-3 mb-3 whitespace-nowrap overflow-hidden text-ellipsis" title={selectedBooking.customerEmail}>
+                       <span className="text-slate-500 mr-2">Email:</span> <span className="font-bold text-slate-900">{selectedBooking.customerEmail}</span>
+                    </div>
+                    <div className="text-sm">
+                       <span className="text-slate-500 mr-2">Phone:</span> <span className="font-bold text-slate-900">{selectedBooking.customerPhone}</span>
+                    </div>
+                  </div>
+                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col justify-center items-start">
+                    <div className="text-sm text-slate-500 mb-2">Current Status</div>
+                    <span className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-sm ${statusColors[selectedBooking.status] || "bg-slate-100"}`}>
+                      {selectedBooking.status}
+                    </span>
+                    <div className="mt-4 text-[10px] text-slate-400 tracking-wider">
+                      Created: {new Date(selectedBooking.createdAt).toLocaleString()}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Service Info */}
+              <div>
+                <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <FiClock className="text-slate-300" /> Service Details
+                </h4>
+                <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 space-y-4 shadow-inner shadow-slate-100/50">
+                  <div>
+                    <span className="text-xs text-slate-500 block mb-1">Service Requested</span> 
+                    <span className="font-black text-slate-800 text-lg">{selectedBooking.serviceType}</span>
+                  </div>
+                  <div>
+                    <span className="text-xs text-slate-500 block mb-1">Property Address</span> 
+                    <span className="font-semibold text-slate-900">{selectedBooking.propertyAddress}</span>
+                  </div>
+                  <div className="pt-2">
+                    <span className="text-xs text-slate-500 block mb-2">Scheduled For</span> 
+                    <span className="font-bold text-indigo-700 bg-indigo-50 px-4 py-2 rounded-xl inline-block shadow-sm border border-indigo-100">
+                      {new Date(selectedBooking.scheduledDate).toLocaleDateString()} at {new Date(selectedBooking.scheduledDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Notes */}
+              {selectedBooking.notes && (
+                <div>
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">Additional Notes</h4>
+                  <div className="p-5 bg-amber-50/50 border border-amber-100 rounded-2xl text-sm text-slate-700 whitespace-pre-wrap leading-relaxed shadow-inner shadow-amber-100/30">
+                    {selectedBooking.notes}
+                  </div>
+                </div>
+              )}
+
+              {/* AI Chat History */}
+              {selectedBooking.aiChatHistory && selectedBooking.aiChatHistory.length > 0 && (
+                <div>
+                  <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3">AI Conversation History</h4>
+                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100 space-y-4">
+                    {selectedBooking.aiChatHistory.map((msg, idx) => (
+                      <div key={idx} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 px-1">
+                          {msg.role === 'user' ? 'Customer' : 'AI Assistant'}
+                        </div>
+                        <div className={`p-4 rounded-2xl text-sm max-w-[85%] leading-relaxed ${msg.role === 'user' ? 'bg-indigo-600 text-white rounded-tr-sm shadow-md shadow-indigo-200' : 'bg-white border border-slate-200 text-slate-700 rounded-tl-sm shadow-sm'}`}>
+                          {msg.content}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div className="p-5 border-t border-slate-100 bg-slate-50/50 flex justify-end">
+              <button 
+                onClick={() => setSelectedBooking(null)}
+                className="px-6 py-2.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all text-sm shadow-md"
+              >
+                Close Details
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

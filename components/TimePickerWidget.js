@@ -32,20 +32,7 @@ export default function TimePickerWidget({ onSelectTime }) {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => onSelectTime(time)}
-            className="py-2.5 rounded-xl text-sm font-medium transition-colors cursor-pointer"
-            style={{ 
-              background: "var(--color-surface-2)", 
-              border: "1px solid rgba(14,165,233,0.2)",
-              color: "var(--color-text-primary)"
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "var(--color-primary)";
-              e.currentTarget.style.color = "#fff";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "var(--color-surface-2)";
-              e.currentTarget.style.color = "var(--color-text-primary)";
-            }}
+            className="py-2.5 rounded-xl text-sm font-bold bg-slate-50 text-slate-700 hover:bg-indigo-600 hover:text-white hover:border-indigo-600 border border-slate-200 transition-all cursor-pointer shadow-sm"
           >
             {time}
           </motion.button>

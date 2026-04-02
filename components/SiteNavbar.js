@@ -5,9 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
-import { services as allServices } from "@/lib/services";
 import { FiHome, FiBriefcase, FiTool, FiZap, FiHardDrive } from "react-icons/fi";
 
+// Internal mapping for default icons
 const serviceIconMap = {
   "home-inspection": <FiHome size={18} />,
   "commercial-inspection": <FiBriefcase size={18} />,
@@ -15,13 +15,6 @@ const serviceIconMap = {
   "electrical-inspection": <FiZap size={18} />,
   "new-construction-inspection": <FiHardDrive size={18} />,
 };
-
-const services = allServices.map((s) => ({
-  icon: serviceIconMap[s.slug] || <FiHome size={18} />,
-  label: s.title,
-  href: `/services/${s.slug}`,
-  desc: s.shortDesc,
-}));
 
 const navLinks = [
   { label: "Home", href: "/home" },
@@ -36,8 +29,33 @@ export default function SiteNavbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [dynamicServices, setDynamicServices] = useState([]);
   const dropdownRef = useRef(null);
   const closeTimer = useRef(null);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const res = await fetch("/api/services");
+        if (res.ok) {
+          const data = await res.json();
+          const mapped = data.map(s => ({
+            _id: s._id,
+            icon: serviceIconMap[s.slug] || <FiHome size={18} />,
+            label: s.title,
+            href: `/services/${s.slug}`,
+            desc: s.shortDesc,
+            color: s.color,
+            bg: s.bg
+          }));
+          setDynamicServices(mapped);
+        }
+      } catch (err) {
+        console.error("SiteNavbar services fetch failed:", err);
+      }
+    };
+    fetchServices();
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -66,6 +84,9 @@ export default function SiteNavbar() {
   const handleMouseLeave = () => {
     closeTimer.current = setTimeout(() => setDropdownOpen(false), 150);
   };
+
+  const cols = Math.ceil(dynamicServices.length / 5) || 1;
+  const panelWidth = Math.max(340, cols * 300);
 
   return (
     <header
@@ -139,7 +160,7 @@ export default function SiteNavbar() {
                       exit={{ opacity: 0, y: 6, scale: 0.97 }}
                       transition={{ duration: 0.18, ease: "easeOut" }}
                       className="absolute top-full left-1/2 pt-2"
-                      style={{ transform: "translateX(-50%)", width: "340px" }}
+                      style={{ transform: "translateX(-50%)", width: `${panelWidth}px` }}
                       onMouseEnter={handleMouseEnter}
                       onMouseLeave={handleMouseLeave}
                     >
@@ -171,10 +192,16 @@ export default function SiteNavbar() {
                           </Link>
                         </div>
 
-                        {/* Service links */}
-                        {services.map((svc) => (
-                          <Link
-                            key={svc.label}
+                        {/* Service links grid */}
+                        <div 
+                          className="grid gap-1"
+                          style={{ 
+                            gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` 
+                          }}
+                        >
+                          {dynamicServices.map((svc) => (
+                            <Link
+                              key={svc._id}
                             href={svc.href}
                             onClick={() => setDropdownOpen(false)}
                             className="flex items-center gap-3 px-3 py-2.5 rounded-xl group/item transition-all duration-200 hover:bg-(--color-accent-2)"
@@ -182,9 +209,11 @@ export default function SiteNavbar() {
                           >
                             <span
                               className="w-9 h-9 rounded-xl flex items-center justify-center text-base shrink-0 transition-colors group-hover/item:bg-white/20"
-                              style={{ background: "var(--color-surface-2)" }}
+                              style={{ background: svc.bg || "var(--color-surface-2)" }}
                             >
-                              {svc.icon}
+                              <div style={{ color: svc.color || "inherit" }}>
+                                {svc.icon}
+                              </div>
                             </span>
                             <div className="group-hover/item:text-white transition-colors">
                               <p className="text-sm font-semibold leading-tight">{svc.label}</p>
@@ -192,6 +221,7 @@ export default function SiteNavbar() {
                             </div>
                           </Link>
                         ))}
+                        </div>
                       </div>
                     </motion.div>
                   )}
@@ -286,15 +316,15 @@ export default function SiteNavbar() {
                           exit={{ height: 0, opacity: 0 }}
                           className="overflow-hidden pl-3 space-y-1 mt-1"
                         >
-                          {services.map((svc) => (
+                          {dynamicServices.map((svc) => (
                             <Link
-                              key={svc.label}
+                              key={svc._id}
                               href={svc.href}
                               onClick={() => { setMobileOpen(false); setMobileServicesOpen(false); }}
                               className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm"
                               style={{ color: "var(--color-text-secondary)" }}
                             >
-                              <span>{svc.icon}</span> {svc.label}
+                              <span style={{ color: svc.color || "inherit" }}>{svc.icon}</span> {svc.label}
                             </Link>
                           ))}
                         </motion.div>

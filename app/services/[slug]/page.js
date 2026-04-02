@@ -82,8 +82,13 @@ export default function ServiceSlugPage({ params }) {
       <div className="min-h-screen" style={{ background: "var(--color-bg)" }}>
 
         {/* ── Breadcrumb + Hero ── */}
-        <section className="relative pt-28 pb-10 px-5 overflow-hidden"
-          style={{ background: service.bg, borderBottom: `1px solid ${service.border}` }}>
+        <section className="relative pt-32 pb-16 px-5 overflow-hidden transition-all duration-700"
+          style={{ background: service.bg || "var(--color-bg)", borderBottom: `1px solid ${service.border || "var(--color-border)"}` }}>
+          
+          {/* Dynamic Background Glow */}
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-[0.08] blur-[120px] pointer-events-none"
+            style={{ background: service.color }} />
+            
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
             style={{ backgroundImage: "linear-gradient(#000 1px,transparent 1px),linear-gradient(90deg,#000 1px,transparent 1px)", backgroundSize: "40px 40px" }} />
 
@@ -109,20 +114,20 @@ export default function ServiceSlugPage({ params }) {
                     </span>
                   </FadeIn>
                 )}
-                <FadeIn delay={0.1} className="flex items-center md:gap-4 gap-2 mb-4">
-                  <div className="aspect-square px-3 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl glass"
-                    style={{ background: "#fff", border: `1px solid ${service.border}`, boxShadow: "var(--shadow-sm)" }}>
+                <FadeIn delay={0.1} className="flex items-center md:gap-6 gap-3 mb-6">
+                  <div className="aspect-square px-4 py-4 rounded-3xl flex items-center justify-center text-3xl sm:text-4xl shadow-xl transition-transform hover:rotate-3"
+                    style={{ background: "#fff", border: `2px solid ${service.border}`, boxShadow: `0 20px 40px -15px ${service.color}30` }}>
                     {(() => {
                       const Icon = serviceIconMap[service.slug] || FiHome;
-                      return <Icon size={28} color={service.color} />;
+                      return <Icon size={32} color={service.color} strokeWidth={2.5} />;
                     })()}
                   </div>
                   <div>
-                    <h1 className="text-3xl sm:text-4xl font-bold" style={{ color: "var(--color-text-primary)" }}>{service.title}</h1>
-                    <div className="flex items-center gap-3 mt-1.5">
-                      <span className="text-base font-bold" style={{ color: service.color }}>{service.price}</span>
-                      <span className="text-xs px-2.5 py-0.5 rounded-full font-medium"
-                        style={{ background: "rgba(0,0,0,0.06)", color: "var(--color-text-muted)" }}>⏱ {service.duration}</span>
+                    <h1 className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: "var(--color-text-primary)" }}>{service.title}</h1>
+                    <div className="flex items-center gap-4 mt-2">
+                      <span className="text-xl font-black px-4 py-1 rounded-xl bg-white/50 border border-white shadow-sm" style={{ color: service.color }}>{service.price}</span>
+                      <span className="text-xs px-3 py-1.5 rounded-full font-bold uppercase tracking-widest border border-slate-200 bg-slate-50"
+                        style={{ color: "var(--color-text-muted)" }}>⏱ {service.duration}</span>
                     </div>
                   </div>
                 </FadeIn>

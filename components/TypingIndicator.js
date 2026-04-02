@@ -26,10 +26,17 @@ export default function TypingIndicator() {
       exit="exit"
       className="flex items-end gap-3 px-2 py-1"
     >
-      {/* Avatar */}
-      <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-sm"
-        style={{ background: "linear-gradient(135deg, #14b8a6, #0ea5e9)" }}>
-        🏠
+      {/* Avatar with Pulse Animation */}
+      <div className="relative shrink-0">
+        <motion.div
+           animate={{ scale: [1, 1.25, 1], opacity: [0, 0.4, 0] }}
+           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+           className="absolute inset-0 rounded-full bg-teal-400"
+        />
+        <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm shadow-sm relative z-10"
+          style={{ background: "linear-gradient(135deg, #14b8a6, #0ea5e9)" }}>
+          🏠
+        </div>
       </div>
 
       {/* Bubble */}

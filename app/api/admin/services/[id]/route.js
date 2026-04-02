@@ -6,7 +6,8 @@ import { getSession } from "@/lib/session";
 export async function GET(req, { params }) {
   await dbConnect();
   try {
-    const service = await Service.findById(params.id);
+    const { id } = await params;
+    const service = await Service.findById(id);
     if (!service) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(service);
   } catch (error) {
@@ -20,8 +21,9 @@ export async function PATCH(req, { params }) {
 
   await dbConnect();
   try {
+    const { id } = await params;
     const body = await req.json();
-    const service = await Service.findByIdAndUpdate(params.id, body, { new: true });
+    const service = await Service.findByIdAndUpdate(id, body, { new: true });
     return NextResponse.json(service);
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });
@@ -34,7 +36,8 @@ export async function DELETE(req, { params }) {
 
   await dbConnect();
   try {
-    await Service.findByIdAndDelete(params.id);
+    const { id } = await params;
+    await Service.findByIdAndDelete(id);
     return NextResponse.json({ message: "Deleted" });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });

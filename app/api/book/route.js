@@ -15,7 +15,7 @@ export async function POST(req) {
       customerPhone: data.phone || "N/A",
       serviceType: data.serviceType || "General Inquiry",
       propertyAddress: data.address || "N/A",
-      scheduledDate: data.date ? new Date(data.date) : new Date(),
+      scheduledDate: (data.date && data.time) ? new Date(`${data.date} ${data.time}`) : (data.date ? new Date(data.date) : new Date()),
       notes: data.notes || "",
       aiChatHistory: data.chatHistory || [],
     });
