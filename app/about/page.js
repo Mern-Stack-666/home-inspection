@@ -167,7 +167,7 @@ export default function AboutPage() {
                       <div className="absolute -left-[33px] w-3 h-3 rounded-full border-2 border-white"
                         style={{ background: "var(--color-accent)", boxShadow: "0 0 0 3px rgba(14,165,233,0.2)" }} />
                       <div className="flex items-start gap-3">
-                        <span className="text-xs font-bold flex-shrink-0 mt-0.5" style={{ color: "var(--color-accent)" }}>{m.year}</span>
+                        <span className="text-xs font-bold shrink-0 mt-0.5" style={{ color: "var(--color-accent)" }}>{m.year}</span>
                         <p className="text-sm" style={{ color: "var(--color-text-secondary)" }}>{m.event}</p>
                       </div>
                     </motion.div>

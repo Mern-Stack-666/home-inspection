@@ -62,7 +62,7 @@ function LoginForm() {
           <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>Sign in to manage your inspection dashboard</p>
         </div>
 
-        <div className="glass rounded-[2rem] p-8 sm:p-10 shadow-2xl" style={{ border: "1px solid var(--glass-border)" }}>
+        <div className="glass rounded-4xl p-8 sm:p-10 shadow-2xl" style={{ border: "1px solid var(--glass-border)" }}>
           {error && (
             <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 flex items-start gap-3 animate-fadein">
               <FiAlertCircle className="text-red-500 mt-0.5 shrink-0" size={18} />
@@ -85,7 +85,7 @@ function LoginForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@homeinspect.ai"
-                  className="w-full bg-[var(--color-surface-2)] rounded-xl pl-11 h-13 focus:outline-none focus:ring-1 border border-slate-200 focus:border-[var(--color-accent)] form-shadow"
+                  className="w-full bg-(--color-surface-2) rounded-xl pl-11 h-13 focus:outline-none focus:ring-1 border border-slate-200 focus:border-(--color-accent) form-shadow"
                 />
               </div>
             </div>
@@ -104,7 +104,7 @@ function LoginForm() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full bg-[var(--color-surface-2)] rounded-xl pl-11 h-13 focus:outline-none focus:ring-1 border border-slate-200 focus:border-[var(--color-accent)] form-shadow"
+                  className="w-full bg-(--color-surface-2) rounded-xl pl-11 h-13 focus:outline-none focus:ring-1 border border-slate-200 focus:border-(--color-accent) form-shadow"
                 />
               </div>
             </div>

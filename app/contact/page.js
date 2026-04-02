@@ -120,8 +120,8 @@ export default function ContactPage() {
             {contactInfo.map((c, i) => (
               <FadeIn key={c.label} delay={i * 0.07}>
                 {c.href ? (
-                  <a href={c.href} className="card p-5 flex items-start gap-4 block h-full hover:shadow-md transition-shadow">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center text-sky-500 flex-shrink-0"
+                  <a href={c.href} className="card p-5 flex items-start gap-4 h-full hover:shadow-md transition-shadow">
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center text-sky-500 shrink-0"
                       style={{ background: "rgba(14,165,233,0.1)" }}>
                       <c.Icon size={20} />
                     </div>
@@ -132,7 +132,7 @@ export default function ContactPage() {
                   </a>
                 ) : (
                   <div className="card p-5 flex items-start gap-4 h-full">
-                    <div className="w-10 h-10 rounded-xl flex items-center justify-center text-sky-500 flex-shrink-0"
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center text-sky-500 shrink-0"
                       style={{ background: "rgba(14,165,233,0.1)" }}>
                       <c.Icon size={20} />
                     </div>
@@ -223,7 +223,7 @@ export default function ContactPage() {
                       <motion.span
                         animate={{ rotate: openFaq === i ? 180 : 0 }}
                         transition={{ duration: 0.2 }}
-                        className="flex-shrink-0"
+                        className="shrink-0"
                         style={{ color: "var(--color-accent)" }}
                       >
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M6 9l6 6 6-6" /></svg>

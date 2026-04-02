@@ -36,7 +36,7 @@ export default function ChatPage() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="flex-shrink-0 flex items-center justify-between px-5 py-3.5"
+        className="shrink-0 flex items-center justify-between px-5 py-3.5"
         style={{
           background: "rgba(255,255,255,0.9)",
           backdropFilter: "blur(16px)",

@@ -184,7 +184,7 @@ export default function HomePage() {
                   <FadeIn key={svc.slug} delay={i * 0.07}>
                     <Link href={`/services/${svc.slug}`}>
                       <div className="card p-7 h-full cursor-pointer relative overflow-hidden group/card">
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--color-accent-2)]/20 rounded-bl-full transform translate-x-8 -translate-y-8 transition-transform group-hover/card:translate-x-4 group-hover/card:-translate-y-4" />
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-(--color-accent-2)/20 rounded-bl-full transform translate-x-8 -translate-y-8 transition-transform group-hover/card:translate-x-4 group-hover/card:-translate-y-4" />
 
                         <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 glass relative z-10"
                           style={{ border: "1px solid var(--color-border)" }}>

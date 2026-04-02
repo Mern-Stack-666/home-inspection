@@ -81,19 +81,19 @@ export default function SiteFooter() {
             <h4 className="font-bold text-sm uppercase tracking-widest mb-6" style={{ color: "var(--color-text-primary)" }}>Contact</h4>
             <ul className="space-y-4">
               <li className="flex items-center gap-3 text-sm text-slate-500">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-800 flex-shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-800 shrink-0">
                   <FiPhone size={14} />
                 </div>
                 (555) 123-4567
               </li>
               <li className="flex items-center gap-3 text-sm text-slate-500">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-800 flex-shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-800 shrink-0">
                   <FiMail size={14} />
                 </div>
                 hello@homeinspect.ai
               </li>
               <li className="flex items-start gap-3 text-sm text-slate-500">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-800 flex-shrink-0 mt-0.5">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-800 shrink-0 mt-0.5">
                   <FiMapPin size={14} />
                 </div>
                 123 Inspector Ave, Suite 100<br />Modern City, MC 90210
